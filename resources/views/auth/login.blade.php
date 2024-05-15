@@ -1,5 +1,7 @@
 <x-guest-layout>
+
     <!-- Session Status -->
+    <section class="max-w-xl m-auto shadow-md bg-gray-50 p-2 sm:p-4 md:p-6 dark:bg-gray-800">
     <x-auth-session-status class="mb-4" :status="session('status')" />
 
     <form method="POST" action="{{ route('login') }}">
@@ -14,7 +16,7 @@
 
         <!-- Password -->
         <div class="mt-4">
-            <x-input-label for="password" :value="__('Password')" />
+            <x-input-label for="password" :value=" __('Password')" />
 
             <x-text-input id="password" class="block mt-1 w-full"
                             type="password"
@@ -44,4 +46,5 @@
             </x-primary-button>
         </div>
     </form>
+        </section>
 </x-guest-layout>
