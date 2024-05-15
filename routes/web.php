@@ -1,12 +1,27 @@
 <?php
 
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\StaticPages;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
-    return view('/welcome');
+    return view('welcome');
 })->name('welcome');
 
+Route::get('welcome', [StaticPages::class, 'welcome'])
+    ->name('welcome');
+
+Route::get('/', [StaticPages::class, 'welcome'])
+    ->name('home');
+
+Route::get('about', [StaticPages::class, 'about'])
+    ->name('about');
+
+Route::get('contact-us', [StaticPages::class, 'contact'])
+    ->name('contact-us');
+
+Route::get('pricing', [StaticPages::class, 'pricing'])
+    ->name('pricing');
 
 Route::get('/dashboard', function () {
     return view('dashboard');
