@@ -16,7 +16,7 @@
                     {{ __('Pricing') }}
                 </x-nav-link>
 
-                <x-nav-link :href="route('welcome')" :active="request()->routeIs('welcome')" class="group">
+                <x-nav-link :href="route('users.index')" :active="request()->routeIs('users.*')" class="group">
                     {{ __('Users') }}
                 </x-nav-link>
                 <x-nav-link :href="route('welcome')" :active="request()->routeIs('welcome')" class="group">
