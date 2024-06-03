@@ -6,7 +6,7 @@
                 Post your job listing now and find the perfect candidate.
             </p>
         </div>
-        <a href="post-job.html"
+        <a href="{{ route('listings.create') }}"
            class="ml-6 px-4 rounded-md py-2
                   text-black bg-yellow-400 shadow shadow-md shadow-black/70
                   hover:text-yellow-300 hover:bg-yellow-600 hover:shadow-none

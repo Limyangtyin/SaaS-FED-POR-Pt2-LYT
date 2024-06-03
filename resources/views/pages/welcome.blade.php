@@ -223,7 +223,7 @@
             </div>
         </div>
 
-        <a href="listings.html" class="block text-xl text-center ">
+        <a href="{{ route('listings.index') }}" class="block text-xl text-center text-white ">
             <i class="fa fa-arrow-alt-circle-right"></i>
             Show All Jobs
         </a>
