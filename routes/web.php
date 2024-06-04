@@ -4,6 +4,7 @@ use App\Http\Controllers\ListingController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\StaticPages;
 use App\Http\Controllers\UserController;
+use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -46,7 +47,7 @@ Route::middleware(['auth', 'verified'])->group(function (){
     // Recover a user from trash
     Route::get('users/trash/{id}/recover', [UserController::class, 'restore'])->name('users.recover');
 
-    // Emptying the trash
+    // Empty user trash
     Route::get('users/trash/empty', [UserController::class, 'empty'])->name('users.empty');
 
     // Recover all user from the trash
@@ -78,28 +79,27 @@ Route::middleware(['auth', 'verified'])->group(function (){
 //    Route::get('listings/{listing}/edit', [ListingController::class, 'edit'])->name('listings.edit');
 //    Route::put('listings/{listing}', [ListingController::class, 'update'])->name('listings.update');
 
-    // Show all users in the trash
+    // Show all listings in the trash
     Route::get('listings/trash', [ListingController::class, 'trash'])->name('listings.trash');
 
-    // Recover a user from trash
+    // Recover a listing from trash
     Route::get('listings/trash/{id}/recover', [ListingController::class, 'restore'])->name('listings.recover');
 
-    // Emptying the trash
+    // Empty listing trash
     Route::get('listings/trash/empty', [ListingController::class, 'empty'])->name('listings.empty');
 
-    // Recover all user from the trash
+    // Recover all listing from the trash
     Route::post('listings/trash/recover', [ListingController::class, 'recoverAll'])->name('listings.recoverAll');
 
-    // Delete a user
+    // Delete a listing
     Route::delete('listings/{id}/trash/destroy', [ListingController::class, 'destroy'])->name('listings.destroy');
 
     Route::resource('listings', ListingController::class);
-    // Retrieve user for delete confirmation
+    // Retrieve listing for delete confirmation
     Route::get('listings/{listing}/delete', [ListingController::class, 'delete'])->name('listing.delete');
 
-    // Confirm delete a user
+    // Confirm delete a listing
     Route::delete('listings/{listing}/delete', [ListingController::class, 'delete'])->name('listing.delete');
 });
-
 
 require __DIR__.'/auth.php';
