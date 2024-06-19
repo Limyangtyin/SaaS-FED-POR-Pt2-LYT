@@ -15,16 +15,22 @@
                 <x-nav-link :href="route('welcome')" :active="request()->routeIs('welcome')" class="group">
                     {{ __('Pricing') }}
                 </x-nav-link>
-
-                <x-nav-link :href="route('users.index')" :active="request()->routeIs('users.*')" class="group">
-                    {{ __('Users') }}
-                </x-nav-link>
+                @can('manage_users')
+                    <x-nav-link :href="route('users.index')" :active="request()->routeIs('users.*')" class="group">
+                        {{ __('Users') }}
+                    </x-nav-link>
+                @endcan
                 <x-nav-link :href="route('welcome')" :active="request()->routeIs('welcome')" class="group">
                     {{ __('About') }}
                 </x-nav-link>
                 <x-nav-link :href="route('welcome')" :active="request()->routeIs('welcome')" class="group">
                     {{ __('Contact Us') }}
                 </x-nav-link>
+                @if('Admin')
+                    <x-nav-link :href="route('admin.permissions')" :active="request()->routeIs('admin')" class="group">
+                        {{ __('Admin') }}
+                    </x-nav-link>
+                @endif
             </div>
         </div>
 

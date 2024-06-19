@@ -7,9 +7,11 @@ use App\Http\Requests\StoreUserRequest;
 use App\Http\Requests\UpdateUserRequest;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\Password;
 use Illuminate\View\View;
+use MongoDB\Driver\Session;
 
 class UserController extends Controller
 {
@@ -18,6 +20,12 @@ class UserController extends Controller
      */
     public function index()
     {
+        $loggedInUser = auth()->user();
+
+        if($loggedInUser->hasRole('Client')){
+            return redirect()->route('users.show', $loggedInUser);
+        }
+
         $users = User::paginate(10);
         $trashedCount = User::onlyTrashed()->latest()->get()->count();
         return view('users.index', compact(['users', 'trashedCount',]));
@@ -52,6 +60,8 @@ class UserController extends Controller
             ]
         );
 
+        $user->hasRole('Client');
+
         return redirect(route('users.index'))
             ->withSuccess("Added '{$user->name}'.");
     }
@@ -69,6 +79,12 @@ class UserController extends Controller
      */
     public function edit(User $user)
     {
+        $loggedInUser = auth()->user();
+
+        if ($loggedInUser->hasRole('Staff') && !$user->hasRole('Client') && $loggedInUser->id !== $user->id) {
+            return redirect()->route('users.index')->with('warning', 'Note: As Staff, you can only edit users with the Client role or yourself.');
+        }
+
         return view('users.edit', compact(['user']));
     }
 
@@ -128,6 +144,19 @@ class UserController extends Controller
      */
     public function delete(User $user)
     {
+        $loggedInUser = auth()->user();
+
+        if ($loggedInUser->hasRole('Admin') && $loggedInUser->id === $user->id) {
+            return redirect()->route('users.index')->with('warning', 'Note: As Admin, you cannot delete yourself.');
+        }
+
+        if ($loggedInUser->hasRole('Staff') && !$user->hasRole('Client')) {
+            return redirect()->route('users.index')->with('warning', 'Note: As Staff, you can only delete users with the role Client.');
+        }
+
+        if ($loggedInUser->hasRole('Client') && $loggedInUser->id !== $user->id) {
+            return redirect()->route('users.index')->with('warning', 'Note: As Client, you can only delete yourself.');
+        }
         return view('users.delete', compact(['user',]));
     }
 
@@ -137,15 +166,21 @@ class UserController extends Controller
     public function destroy(User $user)
     {
         $user->delete();
-        return redirect(route('users.index'));
+        return redirect()->route('users.index')->with('success', 'User deleted successfully.');
     }
 
 
     /**
      * Return view showing all users in the trash
      */
-    public function trash(): View
+    public function trash()
     {
+        $loggedInUser = auth()->user();
+
+        if (!$loggedInUser->hasRole('Admin')) {
+            return redirect()->route('users.index')->with('warning', 'Note: Only Admin can access trash view.');
+        }
+
         $users = User::onlyTrashed()->orderBy('deleted_at')->paginate(10);
         return view('users.trash', compact(['users',]));
     }
@@ -192,4 +227,5 @@ class UserController extends Controller
         }
         return redirect(route('users.trash'));
     }
+
 }

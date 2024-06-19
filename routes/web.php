@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\ListingController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\RolesAndPermissionsController;
 use App\Http\Controllers\StaticPages;
 use App\Http\Controllers\UserController;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
@@ -65,20 +66,6 @@ Route::middleware(['auth', 'verified'])->group(function (){
 });
 
 Route::middleware(['auth', 'verified'])->group(function (){
-//    //Direct to index
-//    Route::get('listings', [ListingController::class, 'index'])->name('listings.index');
-//
-//    // Show all listings
-//    Route::get('listings/{listing}', [ListingController::class, 'show'])->name('listings.show');
-//
-////    // Create And Store Listing
-////    Route::get('listings/create', [ListingController::class, 'create'])->name('listings.create');
-////    Route::post('listings', [ListingController::class, 'store'])->name('listings.store');
-//
-//    // Edit And Update Listing Detail
-//    Route::get('listings/{listing}/edit', [ListingController::class, 'edit'])->name('listings.edit');
-//    Route::put('listings/{listing}', [ListingController::class, 'update'])->name('listings.update');
-
     // Show all listings in the trash
     Route::get('listings/trash', [ListingController::class, 'trash'])->name('listings.trash');
 
@@ -101,5 +88,17 @@ Route::middleware(['auth', 'verified'])->group(function (){
     // Confirm delete a listing
     Route::delete('listings/{listing}/delete', [ListingController::class, 'delete'])->name('listing.delete');
 });
+
+Route::group(['prefix' => 'admin', 'middleware' => ['auth', 'verified', 'role:Admin||Staff||Client']], function (){
+    Route::get('/permissions', [RolesAndPermissionsController::class, 'index'])->name('admin.permissions');
+    Route::post('/assign_role', [RolesAndPermissionsController::class, 'store'])->name('admin.assign-role');
+    Route::delete('/revoke_role', [RolesAndPermissionsController::class, 'destroy'])->name('admin.revoke-role');
+
+    Route::resource('users', UserController::class);
+});
+
+//Route::group(['prefix' => 'admin', 'middleware' => ['auth', 'verified', 'role:Admin||Staff||Client']], function () {
+//    Route::resource('users', UserController::class);
+//});
 
 require __DIR__.'/auth.php';

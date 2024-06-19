@@ -16,6 +16,13 @@
                 </div>
             </section>
         @endif
+        @if(Session::has('warning'))
+            <section id="Messages" class="my-4 px-4">
+                <div class="p-4 border-green-500 bg-green-100 text-green-700 rounded-lg">
+                    {{ Session::get('warning') }}
+                </div>
+            </section>
+        @endif
 
         <section class="px-4 pb-8">
             <header class="flex flex-row justify-between items-center gap-2">

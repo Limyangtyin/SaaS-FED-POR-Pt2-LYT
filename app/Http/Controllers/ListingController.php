@@ -23,8 +23,13 @@ class ListingController extends Controller
         return view('listings.show', compact(['listing',]));
     }
 
-    public function create(): View
+    public function create()
     {
+        $loggedInUser = auth()->user();
+
+        if(!$loggedInUser->hasRole('Client')){
+            return redirect()->route('listings.index')->with('warning', 'Note: Only Client can create job listing.');
+        }
         return view('listings.create');
     }
 
@@ -43,6 +48,7 @@ class ListingController extends Controller
             'email' => ['email:rfc', 'required'],
             'requirements' => ['string', 'required'],
             'benefits' => ['string', 'required']
+
         ]);
 
         $validatedData = $request->validate($rules);
@@ -94,6 +100,12 @@ class ListingController extends Controller
 
     public function edit(Listing $listing)
     {
+        $loggedInUser = auth()->user();
+
+        if($loggedInUser->hasRole('Client') && $loggedInUser->id !== $listing->user_id){
+            return redirect()->route('listings.index')->with('warning', 'Note: As Client, you can only edit your own job listings.');
+        }
+
         return view('listings.edit', compact('listing'));
     }
 
@@ -124,6 +136,12 @@ class ListingController extends Controller
      */
     public function delete(Listing $listing)
     {
+        $loggedInUser = auth()->user();
+
+        if($loggedInUser->hasRole('Client') && $loggedInUser->id !== $listing->user_id){
+            return redirect()->route('listings.index')->with('warning', 'Note: As Client, you can only delete your own job listings.');
+        }
+
         return view('listings.delete', compact(['listing',]));
     }
 
@@ -139,7 +157,7 @@ class ListingController extends Controller
     /**
      * Return view showing all users in the trash
      */
-    public function trash(): View
+    public function trash()
     {
         $listings = Listing::onlyTrashed()->orderBy('deleted_at')->paginate(10);
         return view('listings.trash', compact(['listings',]));
@@ -153,6 +171,12 @@ class ListingController extends Controller
      */
     public function restore($user_id): RedirectResponse
     {
+        $loggedInUser = auth()->user();
+
+        if(!$loggedInUser->hasRole('Admin')){
+            return redirect()->route('listings.trash')->with('warning', 'Note: Only Admin can restore all listings.');
+        }
+
         $listing = Listing::onlyTrashed()->find($user_id);
         $listing->restore();
         return redirect(route('listings.trash'));
@@ -165,6 +189,12 @@ class ListingController extends Controller
      */
     public function empty(): RedirectResponse
     {
+        $loggedInUser = auth()->user();
+
+        if(!$loggedInUser->hasRole('Admin')){
+            return redirect()->route('listings.trash')->with('warning', 'Note: Only Admin can empty listing trash.');
+        }
+
         $listings = Listing::onlyTrashed()->get();
 //        $trashCount = $users->count();
         foreach($listings as $listing){

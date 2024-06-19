@@ -60,7 +60,7 @@
                         <i class="fa fa-arrow-left text-lg"></i>
                         <span>Cancel</span>
                     </a>
-
+{{--                @if(auth()->user()->hasRole('Admin'))--}}
                     <button type="submit"
                             class="p-1 px-2 text-center rounded-md
                                            text-red-600 hover:text-red-200 dark:hover:text-black bg-red-200 dark:bg-black hover:bg-red-500
