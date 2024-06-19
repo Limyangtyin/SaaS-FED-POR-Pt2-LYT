@@ -14,6 +14,7 @@ class ListingController extends Controller
     public function index()
     {
         $listings = Listing::paginate(10);
+        // TODO: Make sure the trash count is for ONLY the user logged in, or ALL trashed for staff/admin
         $trashedCount = Listing::onlyTrashed()->latest()->get()->count();
         return view('listings.index', compact(['listings', 'trashedCount',]));
     }
@@ -23,7 +24,11 @@ class ListingController extends Controller
         return view('listings.show', compact(['listing',]));
     }
 
-    public function create()
+    /**
+     *
+     * @return View|RedirectResponse
+     */
+    public function create(): View | RedirectResponse
     {
         $loggedInUser = auth()->user();
 
@@ -120,6 +125,9 @@ class ListingController extends Controller
             'tags' => ['array', 'required'],
         ]);
 
+        // TODO: Make sure ALL editable parts are validated
+        // TODO: Make sure you use the VALIDATED data to prevent security issues such as JS injection, SQL injection
+        //       and more.
         $listing->update([
             'title' => $request->input('title'),
             'description' => $request->input('description'),
@@ -157,7 +165,7 @@ class ListingController extends Controller
     /**
      * Return view showing all users in the trash
      */
-    public function trash()
+    public function trash(): View
     {
         $listings = Listing::onlyTrashed()->orderBy('deleted_at')->paginate(10);
         return view('listings.trash', compact(['listings',]));

@@ -85,7 +85,7 @@
                         <td class="py-2 text-left">{{ $user->deleted_at }}</td>
                         <td class="py-2 pr-2 text-right">
                             <form class="flex flex-row gap-2 items-center justify-end"
-                                  action="{{ route('users.destroy', $user) }}"
+                                  action="{{ route('users.force-destroy', $user) }}"
                                   method="POST">
                                 @csrf
                                 @method('delete')

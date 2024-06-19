@@ -22,7 +22,7 @@ class UserController extends Controller
     {
         $loggedInUser = auth()->user();
 
-        if($loggedInUser->hasRole('Client')){
+        if ($loggedInUser->hasRole('Client')) {
             return redirect()->route('users.show', $loggedInUser);
         }
 
@@ -171,6 +171,19 @@ class UserController extends Controller
 
 
     /**
+     * Remove the specified resource from storage.
+     */
+    public function forceDestroy($id)
+    {
+        $user = User::onlyTrashed()->find($id);
+
+        $user->forceDelete(); // This deletes the soft-deleted user
+
+        return redirect()->route('users.index')->with('success', 'User deleted successfully.');
+    }
+
+
+    /**
      * Return view showing all users in the trash
      */
     public function trash()
@@ -207,7 +220,7 @@ class UserController extends Controller
     {
         $users = User::onlyTrashed()->get();
 //        $trashCount = $users->count();
-        foreach($users as $user){
+        foreach ($users as $user) {
             $user->forceDelete(); // This deletes the soft-deleted user
         }
         return redirect(route('users.trash'))->with('success', 'User permanently deleted.');
@@ -222,7 +235,7 @@ class UserController extends Controller
     {
         $users = User::onlyTrashed()->get();
         $trashCount = $users->count();
-        foreach($users as $user){
+        foreach ($users as $user) {
             $user->restore(); // This restores the soft-deleted user
         }
         return redirect(route('users.trash'));

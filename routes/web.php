@@ -42,20 +42,20 @@ Route::middleware('auth')->group(function () {
 
 
 Route::middleware(['auth', 'verified'])->group(function (){
+
     // Show all users in the trash
     Route::get('users/trash', [UserController::class, 'trash'])->name('users.trash');
 
-    // Recover a user from trash
-    Route::get('users/trash/{id}/recover', [UserController::class, 'restore'])->name('users.recover');
-
     // Empty user trash
     Route::get('users/trash/empty', [UserController::class, 'empty'])->name('users.empty');
-
     // Recover all user from the trash
     Route::post('users/trash/recover', [UserController::class, 'recoverAll'])->name('users.recoverAll');
 
+    // Recover a user from trash
+    Route::get('users/trash/{id}/recover', [UserController::class, 'restore'])->name('users.recover');
     // Delete a user
-    Route::delete('users/{id}/trash/destroy', [UserController::class, 'destroy'])->name('users.destroy');
+    Route::delete('users/trash/{id}/destroy', [UserController::class, 'forceDestroy'])->name('users.force-destroy');
+
 
     Route::resource('users', UserController::class);
     // Retrieve user for delete confirmation
